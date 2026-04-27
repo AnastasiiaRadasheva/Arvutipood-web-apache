@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: arvutipood_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: arvutipood
+      MYSQL_USER: arvutiuser
+      MYSQL_PASSWORD: arvutipass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - arvutivork
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: ./app
+    container_name: arvutipood_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: arvutiuser
+      DB_PASSWORD: arvutipass
+      DB_NAME: arvutipood
+    volumes:
+      - ./logs/app:/logs
+    ports:
+      - "5000:5000"
+    networks:
+      - arvutivork
+
+volumes:
+  db_data:
+
+networks:
+  arvutivork:
+    driver: bridge
