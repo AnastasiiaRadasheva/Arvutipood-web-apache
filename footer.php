@@ -1,1 +1,1 @@
-<footer> anastasIIa-RaDaShEvA 5-ARESHKI</footer>
+<footer> BeLoChKa anastasIIa-RaDaShEvA i 5-ARESHKOVs</footer>
