@@ -1,0 +1,19 @@
+✅ РЕШЕНИЕ: дать правильные права на host‑папку
+
+Выполни в терминале:
+bash
+
+sudo chmod -R 777 logs/apache
+
+или более безопасно:
+bash
+
+sudo chown -R www-data:www-data logs/apache
+sudo chmod -R 664 logs/apache
+
+🟦 После этого перезапусти контейнер
+bash
+
+sudo docker compose down
+sudo docker compose up --build
+
