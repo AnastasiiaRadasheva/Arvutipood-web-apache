@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: arvutipood_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: arvutipood
+      MYSQL_USER: arvutiuser
+      MYSQL_PASSWORD: arvutipass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./logs/db:/var/log/mysql
+    networks:
+      - arvutipood_net
+    command: --general-log=1 --general-log-file=/var/log/mysql/general.log --log-error=/var/log/mysql/error.log
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: arvutipood_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: arvutiuser
+      PMA_PASSWORD: arvutipass
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - arvutipood_net
+
+volumes:
+  db_data:
+
+networks:
+  arvutipood_net:
+    driver: bridge
